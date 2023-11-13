@@ -34,6 +34,9 @@ git checkout "${GITHUB_BASE_REF}"
 dbt ls
 cp -r target target-previous
 git checkout -
+if [ "${DEBUG_MODE}" = "true" ]; then
+	ls target-previous/
+fi
 
 # Run impact analysis script.
 DBT_ARTIFACT_STATE_PATH=target-previous python "${GITHUB_ACTION_PATH}/src/impact_analysis.py"
