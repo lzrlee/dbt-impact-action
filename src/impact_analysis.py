@@ -233,7 +233,7 @@ def dbt_impact_analysis() -> str:
     # Step 1 - determine which dbt nodes are impacted by the changes in a given PR.
     changed_dbt_nodes = determine_changed_dbt_models()
     dbt_id_to_dbt_node = {node["unique_id"]: node for node in changed_dbt_nodes}
-    # print(changed_dbt_nodes)
+    print("Changed DBT Nodes:", changed_dbt_nodes)
 
     # Step 2 - map dbt nodes to datahub urns.
     # In an ideal world, the datahub urns for dbt would just be the dbt node ids.
@@ -244,10 +244,12 @@ def dbt_impact_analysis() -> str:
         for urn, node in datahub_node_props.items()
         if node
     }
-    # print(urn_to_dbt_id)
+    print("URN to DBT ids:", urn_to_dbt_id)
 
     # Step 3 - generate downstream impact analysis for each datahub urn.
     downstreams_report = {urn: get_impact_analysis(graph, urn) for urn in urns}
+
+    print("Downstreams Report:", json.dumps(downstreams_report, indent=2))
 
     all_impacted_urns = {
         downstream["urn"]
