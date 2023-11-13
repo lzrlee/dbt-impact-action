@@ -35,7 +35,8 @@ dbt ls
 cp -r target target-previous
 git checkout -
 if [ "${DEBUG_MODE}" = "true" ]; then
-	ls target-previous/
+  echo "DEBUG PRINT:"
+	ls -lha target-previous/
 fi
 
 # Run impact analysis script.
