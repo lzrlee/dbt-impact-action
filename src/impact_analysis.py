@@ -200,10 +200,11 @@ query GetLineage($urn: String!, $count: Int!) {
 
 
 def get_impact_analysis(graph: DataHubGraph, urn: str):
+    query_urn = urn.replace("urn:li:dataPlatform:dbt", "urn:li:dataPlatform:snowflake")
     result = graph.execute_graphql(
         IMPACT_ANALYSIS_QUERY,
         variables={
-            "urn": urn,
+            "urn": query_urn,
             "count": MAX_DOWNSTREAMS_TO_FETCH,
         },
     )
@@ -221,7 +222,9 @@ def get_impact_analysis(graph: DataHubGraph, urn: str):
     # downstreams.sort(key=lambda x: x["degree"])
 
     downstream_details = [downstream["entity"] for downstream in downstreams]
-    print(f"urn: {urn}, downstreams: {len(downstream_details)}")
+
+    print(f"urn: {urn}, query_urn: {query_urn}, downstreams: {len(downstream_details)}")
+
     return downstream_details
 
 
@@ -245,6 +248,8 @@ def dbt_impact_analysis() -> str:
         if node
     }
     print("URN to DBT ids:", urn_to_dbt_id)
+
+
 
     # Step 3 - generate downstream impact analysis for each datahub urn.
     downstreams_report = {urn: get_impact_analysis(graph, urn) for urn in urns}
